@@ -1,0 +1,21 @@
+Ready-to-use prompts (paste into any code assistant)
+
+“Generate Organization + WebSite JSON-LD for my brand (ClearMention.ai). Include sameAs, logo, and contactPoint.”
+
+“Give me an Article JSON-LD template I can reuse. Variables: title, description, author, datePublished, dateModified, url, image.”
+
+“Create a WordPress code snippet (no plugin) to print JSON-LD in <head> via functions.php.”
+
+“Write a Python script that reads a CSV of posts and outputs one JSON-LD Article block per row.”
+
+“Make a Node function that appends UTM params to any URL list safely (keeps existing query strings).”
+
+“Validate JSON-LD against schema.org types and show me what's missing.”
+
+“Draft a robots.txt and a non-standard ai.txt/llms.txt with contact + rate-limit notes for agents.”
+
+“Explain how to safely include multiple JSON-LD blocks on one page (Organization + Article + Breadcrumb).”
+
+“Give me unit tests for the UTM builder.”
+
+“Optimize the Python script for very large CSVs.”
