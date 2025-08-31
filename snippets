@@ -1,0 +1,115 @@
+Copy-paste snippets (you can use these right now)
+1) Organization + WebSite JSON-LD
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "ClearMention",
+  "url": "https://clearmention.ai/",
+  "logo": "https://clearmention.ai/assets/logo.png",
+  "sameAs": [
+    "https://www.linkedin.com/company/clearmention",
+    "https://x.com/clearmention"
+  ],
+  "contactPoint": [{
+    "@type": "ContactPoint",
+    "contactType": "press",
+    "email": "contributor@clement.ai"
+  }]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "ClearMention",
+  "url": "https://clearmention.ai/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://clearmention.ai/search?q={query}",
+    "query-input": "required name=query"
+  }
+}
+</script>
+
+2) Reusable Article JSON-LD template
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "{{TITLE}}",
+  "description": "{{DESCRIPTION}}",
+  "author": { "@type": "Person", "name": "Shelley Owens" },
+  "publisher": { "@type": "Organization", "name": "ClearMention", "logo": { "@type": "ImageObject", "url": "https://clearmention.ai/assets/logo.png" } },
+  "datePublished": "{{YYYY-MM-DD}}",
+  "dateModified": "{{YYYY-MM-DD}}",
+  "image": ["{{IMAGE_URL}}"],
+  "mainEntityOfPage": { "@type": "WebPage", "id": "{{CANONICAL_URL}}" }
+}
+</script>
+
+3) WordPress: print JSON-LD from functions.php
+// Add JSON-LD to <head> without a plugin.
+add_action('wp_head', function () {
+  if (is_single()) {
+    $data = [
+      "@context" => "https://schema.org",
+      "@type" => "Article",
+      "headline" => get_the_title(),
+      "author" => ["@type"=>"Person","name"=>"Shelley Owens"],
+      "datePublished" => get_the_date('c'),
+      "dateModified" => get_the_modified_date('c'),
+      "mainEntityOfPage" => ["@type"=>"WebPage","id"=> get_permalink()]
+    ];
+    echo '<script type="application/ld+json">'.wp_json_encode($data).'</script>';
+  }
+}, 5);
+
+4) Python: CSV ➜ JSON-LD (Articles)
+import csv, json, sys, pathlib
+rows = list(csv.DictReader(open('posts.csv', newline='', encoding='utf-8')))
+out = []
+for r in rows:
+    out.append({
+        "@context":"https://schema.org",
+        "@type":"Article",
+        "headline": r["title"],
+        "description": r.get("description",""),
+        "author": {"@type":"Person","name": r.get("author","Shelley Owens")},
+        "datePublished": r.get("date_published",""),
+        "dateModified": r.get("date_modified",""),
+        "image": [r.get("image_url","")],
+        "mainEntityOfPage": {"@type":"WebPage","id": r["url"]}
+    })
+pathlib.Path("jsonld_articles.json").write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
+print("Wrote jsonld_articles.json")
+
+
+Expected CSV headers: url,title,description,date_published,date_modified,author,image_url
+
+5) Node (browser-safe): UTM builder
+function addUtm(url, params) {
+  const u = new URL(url);
+  for (const [k,v] of Object.entries(params)) u.searchParams.set(k, v);
+  return u.toString();
+}
+// Example:
+const out = addUtm("https://clearmention.ai/newsletter",
+  {utm_source:"stackexchange",utm_medium:"referral",utm_campaign:"ai-visibility"});
+console.log(out);
+
+6) robots.txt + non-standard ai.txt (optional)
+# robots.txt
+User-agent: *
+Allow: /
+Disallow: /private/
+Sitemap: https://clearmention.ai/sitemap.xml
+
+# ai.txt (aka llms.txt) — NOT a web standard, purely informational
+Contact: mailto:contributor@clement.ai
+Sitemap: https://clearmention.ai/sitemap.xml
+Policy: public_content=allow
+RateLimit: 5 rps
+Disallow: /private/
+Note: This file is advisory; agents may ignore it.
